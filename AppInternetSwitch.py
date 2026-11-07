@@ -76,9 +76,9 @@ def service_executable(path_name):
     if not match:
         return None
     path = os.path.expandvars(match.group(1) or match.group(2)).strip()
-    if path.lower().startswith(r"\systemroot\"):
-        path = os.path.join(os.environ.get("SystemRoot", r"C:\Windows"), path[len(r"\SystemRoot\"):])
-    elif path.lower().startswith(r"\??\"):
+    if path.lower().startswith("\\systemroot\\"):
+        path = os.path.join(os.environ.get("SystemRoot", r"C:\\Windows"), path[len("\\SystemRoot\\"):])
+    elif path.lower().startswith("\\??\\"):
         path = path[4:]
     if not os.path.isabs(path):
         candidate = os.path.join(os.environ.get("SystemRoot", r"C:\Windows"), "System32", path)
