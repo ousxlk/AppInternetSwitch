@@ -224,7 +224,8 @@ class App(tk.Tk):
         self.toggle_btn.pack(side="left", padx=8)
         self.remove_btn = tk.Button(buttons, text="Remove", command=self.remove_selected,
                                     bg="#e2e7ee", fg="#263449", relief="flat", padx=14, pady=9,
-                                    font=("Segoe UI", 10), cursor="hand2").pack(side="left")
+                                    font=("Segoe UI", 10), cursor="hand2")
+        self.remove_btn.pack(side="left")
         self.tree.bind("<<TreeviewSelect>>", self.selection_changed)
         tk.Label(self, text="Uses Windows Defender Firewall. Service rules target the selected service, including services hosted by svchost.exe. Administrator access is required.",
                  bg="#f3f5f8", fg="#687589", font=("Segoe UI", 9), padx=20, pady=8).pack(fill="x")
