@@ -71,6 +71,37 @@ def remove_rules(path):
         )
 
 
+
+def install_startup_task():
+    """Launch the app at each Windows sign-in with the privileges needed for Firewall."""
+    task_name = "AppInternetSwitch"
+    query = subprocess.run(
+        ["schtasks", "/Query", "/TN", task_name],
+        capture_output=True, text=True,
+        creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0)
+    )
+    if query.returncode == 0:
+        return
+
+    if getattr(sys, "frozen", False):
+        command = subprocess.list2cmdline([os.path.abspath(sys.executable)])
+    else:
+        script = os.path.abspath(sys.argv[0])
+        command = subprocess.list2cmdline([os.path.abspath(sys.executable), script])
+
+    created = subprocess.run(
+        ["schtasks", "/Create", "/TN", task_name, "/SC", "ONLOGON",
+         "/RL", "HIGHEST", "/IT", "/TR", command, "/F"],
+        capture_output=True, text=True,
+        creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0)
+    )
+    if created.returncode != 0:
+        detail = (created.stderr or created.stdout or "Unknown Task Scheduler error").strip()
+        messagebox.showwarning(
+            APP_NAME,
+            "The app is running, but automatic startup could not be enabled.\\n\\n" + detail
+        )
+
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -217,4 +248,5 @@ if __name__ == "__main__":
         sys.exit(1)
     if not is_admin():
         relaunch_as_admin()
+    install_startup_task()
     App().mainloop()
